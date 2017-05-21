@@ -1,4 +1,4 @@
-import geometry as gx
+from . import geometry as gx
 from math import radians, cos, sin, asin, sqrt, pi
 import shapely as shx
 from shapely.geometry import Polygon,Point,MultiPolygon
@@ -28,12 +28,12 @@ def boundCheck(p,r):	# Checking if the measurements cover Poles
 	return ''.join(bc)
 	
 def order(v,w,mode=0):  # sorting vector v and w pivoting on v
-	a=zip(v,w)
+	a=list(zip(v,w))
 	if mode==0:
 		a.sort()
 	else:
 		a.sort(reverse=True)
-	l=zip(*a)
+	l=list(zip(*a))
 	v=list(l[0])
 	w=list(l[1])
 	return [v,w]
@@ -58,15 +58,15 @@ def polygonize(c,d):
 		vert1=[gx.E.map(xx) for xx in sc]
 		vert=[(xx.x,xx.y) for xx in vert1]
 		if bc=='10' or bc=='01':
-			lon,lat=zip(*vert)
+			lon,lat=list(zip(*vert))
 			lon,lat=order(lon,lat)
 			c1=(180,lat[-1])
 			c2=(180,90)
 			c3=(-180,90)
 			c4=(-180,lat[0])
-			cur=Polygon(zip(lon,lat)+[c1,c2,c3,c4])
+			cur=Polygon(list(zip(lon,lat))+[c1,c2,c3,c4])
 		else:
-			lon,lat=zip(*vert)
+			lon,lat=list(zip(*vert))
 			pivot=lon[0]
 			ii=-1
 			j=-1
@@ -84,24 +84,24 @@ def polygonize(c,d):
 					pivot=xx
 				# Note that a small circle can not pass meridian more than twice
 			if ii==-1 and j==-1:
-				cur1=Polygon(zip(lon,lat))
+				cur1=Polygon(list(zip(lon,lat)))
 				if bc=='11':		# Containing both Poles
 					cur=U-cur1
 				else:
 					cur=cur1
 			elif ii==-1 or j==-1:
-				raise gx.geoError, 'Algorithmic bug in polygonizing for earth model '
+				raise gx.geoError('Algorithmic bug in polygonizing for earth model ')
 			else:
 				lon1=lon[ii+1:j+1]
 				lat1=lat[ii+1:j+1]
 				lon2=lon[j+1:]+lon[0:ii+1]
 				lat2=lat[j+1:]+lat[0:ii+1]
 				if lon1[0]>lon2[0]:
-					P1=Polygon([(180,lat1[0])]+zip(lon1,lat1)+[(180,lat1[-1])])
-					P2=Polygon([(-180,lat2[0])]+zip(lon2,lat2)+[(-180,lat2[-1])])
+					P1=Polygon([(180,lat1[0])]+list(zip(lon1,lat1))+[(180,lat1[-1])])
+					P2=Polygon([(-180,lat2[0])]+list(zip(lon2,lat2))+[(-180,lat2[-1])])
 				else:
-					P1=Polygon([(-180,lat1[0])]+zip(lon1,lat1)+[(-180,lat1[-1])])
-					P2=Polygon([(180,lat2[0])]+zip(lon2,lat2)+[(180,lat2[-1])])
+					P1=Polygon([(-180,lat1[0])]+list(zip(lon1,lat1))+[(-180,lat1[-1])])
+					P2=Polygon([(180,lat2[0])]+list(zip(lon2,lat2))+[(180,lat2[-1])])
 				cur1=P1.union(P2)
 				if bc=='11':		# Containing both Poles
 					cur=U-cur1

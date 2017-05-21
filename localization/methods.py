@@ -1,7 +1,7 @@
 import numpy as num
-import geometry as gx
+from . import geometry as gx
 from scipy.optimize import minimize,fmin_cobyla
-from find_centroid import maxPol
+from .find_centroid import maxPol
 
 class cornerCases(Exception):
     def __init__(self, value):
@@ -17,7 +17,7 @@ def Norm(x,y,mode='2D'):
 	elif mode=='Earth1':
 		return gx.E.gcd(x[0],x[1],y[0],y[1])
 	else:
-		raise cornerCases, 'Unknown'
+		raise cornerCases('Unknown')
 
 def sum_error(x,c,r,mode):
 	l=len(c)
@@ -56,13 +56,13 @@ def lse(cA,mode='2D',cons=True):
 	elif mode=='3D':
 		x0=num.array([p0.x,p0.y,p0.z])
 	else:
-		raise cornerCases, 'Mode not supported:'+mode
+		raise cornerCases('Mode not supported:'+mode)
 	if mode=='Earth1':
 		fg1=1
 	else:
 		fg1=0
 	if cons:
-		print 'GC-LSE geolocating...'
+		print('GC-LSE geolocating...')
 		if not is_disjoint(cA,fg=fg1):
 			cL=[]
 			for q in range(l):
@@ -72,22 +72,22 @@ def lse(cA,mode='2D',cons=True):
 			res = fmin_cobyla(sum_error, x0,cL,args=(c,r,mode),consargs=(),rhoend = 1e-5)
 			ans=res
 		else:
-			raise cornerCases, 'Disjoint'
+			raise cornerCases('Disjoint')
 	else:
-		print 'LSE Geolocating...'
+		print('LSE Geolocating...')
 		res = minimize(sum_error, x0, args=(c,r,mode), method='BFGS')
 		ans=res.x
 	return gx.point(ans)
 	
 def CCA(cA,mode='2D',detail=False):
 	if mode=='2D':
-		from shapely_2D import polygonize
+		from .shapely_2D import polygonize
 	elif mode=='Earth1':
-		from shapely_earth1 import polygonize
+		from .shapely_earth1 import polygonize
 	else:
-		print """The combination of centroid method and
-		your selected mode does not exist"""
-		raise cornerCases, 'InputError'
+		print("""The combination of centroid method and
+		your selected mode does not exist""")
+		raise cornerCases('InputError')
 	P=polygonize([xx.c for xx in cA],[xx.r for xx in cA])
 	area,n=maxPol(P)
 	ans1=area.centroid

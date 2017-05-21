@@ -7,12 +7,12 @@ res=0.0001
 s_res=math.pi/180.0
 
 def order(v,w,mode=0):
-	a=zip(v,w)
+	a=list(zip(v,w))
 	if mode==0:
 		a.sort()
 	else:
 		a.sort(reverse=True)
-	l=zip(*a)
+	l=list(zip(*a))
 	v=list(l[0])
 	w=list(l[1])
 	return [v,w]
@@ -90,12 +90,12 @@ def circles_intersect(sA):
 	sA=uni_obj(sA)
 	l=len(sA)
 	if l<3:
-		raise geoError,'InputError'
+		raise geoError('InputError')
 	#Checking disjoint case
 	for i in range(0,l-1):
 		for j in range(i+1,l):
 			if (sA[i].c.dist(sA[j].c) >  (sA[i].r+sA[j].r)):
-				raise geoError, 'Disjoint'
+				raise geoError('Disjoint')
 	p1,p2=circle_intersect(sA[0],sA[1])
 	p3,p4=circle_intersect(sA[2],sA[1])
 	if p1.dist(p3)<res or p1.dist(p4)<res:
@@ -131,12 +131,12 @@ def drawC(cA,ax):
 
 
 def order(v,w,mode=0):
-	a=zip(v,w)
+	a=list(zip(v,w))
 	if mode==0:
 		a.sort()
 	else:
 		a.sort(reverse=True)
-	l=zip(*a)
+	l=list(zip(*a))
 	v=list(l[0])
 	w=list(l[1])
 	return [v,w]
@@ -168,7 +168,7 @@ class point:
 			elif l==3:
 				z=argv[2]
 			else:
-				raise geoError, 'Input'
+				raise geoError('Input')
 			self.x=float(argv[0])
 			self.y=float(argv[1])
 			self.z=z
@@ -386,7 +386,7 @@ class vec:
 		b=self.dy
 		c=self.dz
 		if self.mag()<res:
-			raise geoError, 'ZeroEntity'
+			raise geoError('ZeroEntity')
 		if (abs(a)<res and abs(b)<res):
 			return (vec(0,0,1),vec(0,1,0),vec(1,0,0))
 		elif (abs(a)<res and abs(c)<res):
@@ -459,7 +459,7 @@ class line:
 	def __init__(self,x,y):
 		if isinstance(x,point) and isinstance(y,point):
 			if x==y:
-				raise geoError, 'Degenerate'
+				raise geoError('Degenerate')
 			try:
 				temp=(x.y-y.y)/(x.x-y.x)
 				if temp==0:
@@ -505,7 +505,7 @@ class line:
 	def intersect(self,L):
 		if isinstance(L,line):
 			if self.m==L.m:
-				raise geoError,'parellel'
+				raise geoError('parellel')
 			else:
 				if self.kind=='Normal' and L.kind=='Normal':
 					x=(self.b-L.b)/(L.m-self.m)
@@ -528,7 +528,7 @@ class line:
 				elif self.kind=='Vertical' and L.kind=='Horizental':
 					return point(self.b,L.b)
 				else:
-					raise geoError,'Unknown'
+					raise geoError('Unknown')
 		else:
 			p=L.c
 			x0=p.x
@@ -599,7 +599,7 @@ class Triangle:
 		z=L[-1]
 		L=line(x,y)
 		if L.side(z)==0:
-			raise geoError, 'Degenerate'
+			raise geoError('Degenerate')
 		self.a=x
 		self.b=y
 		self.c=z
@@ -637,7 +637,7 @@ class Sphere:
 		on the earth (specified in decimal degrees)
 		"""
 		# convert decimal degrees to radians 
-		lon1, lat1, lon2, lat2 = map(math.radians, [lon1, lat1, lon2, lat2])
+		lon1, lat1, lon2, lat2 = list(map(math.radians, [lon1, lat1, lon2, lat2]))
 
 		# haversine formula 
 		dlon = lon2 - lon1 
@@ -669,7 +669,7 @@ class Sphere:
 		r=S.R
 		d=self.c.dist(S.c)
 		if d > (R+r):
-			raise geoError, 'Disjoint'
+			raise geoError('Disjoint')
 		ex1=vec(S.c-self.c)
 		ex,ey,ez=ex1.floor()
 		x=(d**2-r**2+R**2)/(2*d)
@@ -726,7 +726,7 @@ class Polygon:
 			self.L=L
 			self.n=len(L)
 		else:
-			raise geoError, 'open'
+			raise geoError('open')
 
 	def area(self):
 		s=0
@@ -777,7 +777,7 @@ class Ray:
 				a1=self.c.angle(p[0])
 				a2=self.c.angle(p[1])
 				if abs(a1-a2) < res:
-					print 'hey'
+					print('hey')
 					if p[0].dist(self.c)> p[1].dist(self.c):
 						return [p[1],p[0]]
 					else:
@@ -846,12 +846,12 @@ class ndisc:
 		pll=[]
 		cA=self.cA
 		if len(cA)==0:
-			raise geoError, 'InputError'
+			raise geoError('InputError')
 		elif len(cA)==1:
 			return cA[0].to_poly(step)
 
 		if self.is_disjoint():
-			raise geoError, 'Disjoint'
+			raise geoError('Disjoint')
 		self.sort()
 		cA=self.cA
 		st=False
@@ -911,8 +911,8 @@ class ndisc:
 				pc=self.intersect(ray)
 				pll.append(pc)
 			except geoError:
-				print 'Unknown Error in ray-ndisc intersection'
-				raise geoError, 'Unknown'
+				print('Unknown Error in ray-ndisc intersection')
+				raise geoError('Unknown')
 		pll[-1]=pll[0]
 		return pll
 		

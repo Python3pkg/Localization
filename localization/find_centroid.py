@@ -28,7 +28,7 @@ def intersection_matrix(P):
 	
 def canInd(P,ni):
 	l=len(P)
-	ind=range(l)
+	ind=list(range(l))
 	if ni<2:
 		return [[xx] for xx in ind]
 	if ni >=l:
@@ -62,7 +62,7 @@ def checkCan(P,can):
 				try:
 					C=C.intersection(P[j])
 				except:
-					print '(!)Warning: in checkCan'
+					print('(!)Warning: in checkCan')
 			else:
 				fg=True
 				break
@@ -96,7 +96,7 @@ def maxPol(P):
 			continue
 	if ni>0:
 		return (P,ni)
-	raise geoError,'UnKnown'
+	raise geoError('UnKnown')
 
 			
 			
